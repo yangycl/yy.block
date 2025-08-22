@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>413 - 檔案太大啦！</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+      color: #00ff00;
+      font-family: monospace;
+      height: 100%;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .message {
+      position: absolute;
+      top: 25%;
+      width: 100%;
+      text-align: center;
+      font-size: 2em;
+      color: #00ff00;
+      text-shadow: 0 0 5px #0f0;
+      z-index: 1;
+    }
+
+    a {
+      color: #0f0;
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: #fff;
+    }
+
+    .emoji {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+
+  <div class="message">
+    <div class="emoji">💾📦</div>
+    <h1>413 - 檔案太大啦！</h1>
+    <p>伺服器說：「你給太多了，我吃不下！」</p>
+    <p>📌 請試試：</p>
+    <ul style="list-style: none; padding: 0;">
+      <li>🗜️ 壓縮圖片</li>
+      <li>📁 減少檔案大小</li>
+      <li>📤 分批上傳</li>
+    </ul>
+    <p><a href="/yy.block/">回首頁</a></p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const letters = "01";
+    const fontSize = 16;
+    const columns = Math.floor(canvas.width / fontSize);
+
+    const drops = Array(columns).fill(1);
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 33);
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
