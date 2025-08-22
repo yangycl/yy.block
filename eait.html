@@ -29,6 +29,10 @@
   <button onclick="runCode()">執行</button>
 
   <script>
+    var workspace = Blockly.inject('blocklyDiv', {
+  toolbox: document.getElementById('toolbox')
+});
+
     function runCode() {
       var code = Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
       var iframe = document.getElementById('sandboxFrame');
@@ -167,5 +171,6 @@ Blockly.JavaScript['call_function'] = function(block) {
 
 </body>
 </html>
+
 
 
