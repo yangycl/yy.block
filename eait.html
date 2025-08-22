@@ -10,29 +10,29 @@
     #blocklyDiv { height: 500px; width: 100%; }
   </style>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/yangycl/yy.block/main/e737f41f-5407-42fa-8c2e-a9d7a89ad26d.png">
-
 </head>
 <body>
-  
 
   <div id="blocklyDiv"></div>
+
   <xml id="toolbox" style="display: none">
     <category name="控制" colour="210">
-    <block type="repeat_times_simple"></block>
-     <block type="fc-loop"></block>  
-     <block type="break_loop"></block>
-    <block type="continue_loop"></block>
-    <block type="alert_loop"></block>
-  </category>
-  
+      <block type="repeat_times_simple"></block>
+      <block type="fc_loop"></block>  
+      <block type="break_loop"></block>
+      <block type="continue_loop"></block>
+      <block type="alert_loop"></block>
+    </category>
   </xml>
+
   <iframe id="sandboxFrame" sandbox="allow-scripts" style="width:0; height:0; border:0;"></iframe>
-  <button onclick="runcode()">執行</button>
+  <button onclick="runCode()">執行</button>
+
   <script>
     function runCode() {
       var code = Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
       var iframe = document.getElementById('sandboxFrame');
-    
+
       var html = `
         <!DOCTYPE html>
         <html>
@@ -48,13 +48,13 @@
         </body>
         </html>
       `;
-    
-      // 把 code 放進 iframe 中執行
+
       var blob = new Blob([html], { type: 'text/html' });
       var url = URL.createObjectURL(blob);
       iframe.src = url;
     }
-        Blockly.Blocks['repeat_times_simple'] = {
+
+    Blockly.Blocks['repeat_times_simple'] = {
       init: function () {
         this.appendDummyInput()
           .appendField("重複次數")
@@ -68,14 +68,15 @@
       }
     };
     Blockly.JavaScript['repeat_times_simple'] = function(block) {
-  var times = block.getFieldValue('TIMES');
-  var statements_do = Blockly.JavaScript.statementToCode(block, 'DO');
-  var code = `for (var i = 0; i < ${times}; i++) {\n` +
-             statements_do + 
-             `}\n`;
-  return code;
-};
-Blockly.Blocks['break_loop'] = {
+      var times = block.getFieldValue('TIMES');
+      var statements_do = Blockly.JavaScript.statementToCode(block, 'DO');
+      var code = `for (var i = 0; i < ${times}; i++) {\n` +
+                 statements_do + 
+                 `}\n`;
+      return code;
+    };
+
+    Blockly.Blocks['break_loop'] = {
       init: function () {
         this.appendDummyInput().appendField("跳出迴圈");
         this.setPreviousStatement(true, null);
@@ -84,73 +85,83 @@ Blockly.Blocks['break_loop'] = {
         this.setTooltip("離開迴圈");
       }
     };
-
     Blockly.JavaScript['break_loop'] = function(block) {
       return 'break;\n';
     };
 
     Blockly.Blocks['continue_loop'] = {
-    init: function () {
+      init: function () {
         this.appendDummyInput()
-        .appendField("繼續下一次迴圈");
-        this.setPreviousStatement(true, null);  // 可以接前一個積木
-        this.setNextStatement(true, null);      // 可以接下一個積木
-        this.setColour(210);                     // 綠色
+          .appendField("繼續下一次迴圈");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(210);
         this.setTooltip("跳過當前迴圈，繼續下一次");
-    }
+      }
     };
     Blockly.JavaScript['continue_loop'] = function(block) {
-        return 'continue;\n';
+      return 'continue;\n';
     };
-    // 定义其他积木类型彈出視窗
-    // 定義 alert_loop 積木
-Blockly.Blocks["alert_loop"] = {
-    init: function () {
-       this.appendDummyInput()
-      .appendField("彈出訊息")
-      .appendField(new Blockly.FieldTextInput("你好"), "TEXT");
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(210);
-    this.setTooltip("彈出一段文字訊息");
+
+    Blockly.Blocks["alert_loop"] = {
+      init: function () {
+         this.appendDummyInput()
+          .appendField("彈出訊息")
+          .appendField(new Blockly.FieldTextInput("你好"), "TEXT");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(210);
+        this.setTooltip("彈出一段文字訊息");
+      }
+    };
+    Blockly.JavaScript["alert_loop"] = function (block) {
+      const msg = block.getFieldValue("TEXT");
+      return `alert("${msg}");\n`;
+    };
+
+    // 定義函式積木
+Blockly.Blocks['define_function'] = {
+  init: function() {
+    this.appendDummyInput()
+      .appendField("定義函式")
+      .appendField(new Blockly.FieldTextInput("myFunction"), "FUNC_NAME");
+    this.appendStatementInput("DO")
+      .setCheck(null)
+      .appendField("執行");
+    this.setColour(290);
+    this.setTooltip("定義一個函式");
+    this.setHelpUrl("");
   }
 };
 
-// 定義 JavaScript 產生器
-Blockly.JavaScript["alert_loop"] = function (block) {
-  const msg = block.getFieldValue("TEXT");
-  return `alert("${msg}");\n`;
+Blockly.JavaScript['define_function'] = function(block) {
+  var funcName = block.getFieldValue('FUNC_NAME');
+  var statements = Blockly.JavaScript.statementToCode(block, 'DO');
+  var code = `function ${funcName}() {\n${statements}}\n`;
+  return code;
 };
-    
-     Blockly.Blocks['fc-loop'] = {
-      init: function () {
-        this.appendDummyInput()
-          .appendField(函式名稱)
-          .appendField(new Blockly.FieldNumber(10, 1, 100), "TIMES");
-        this.appendStatementInput("DO")
-          .setCheck(null)
-          .appendField("執行");
-        this.setColour(120);
-        this.setTooltip("用其他積木定義一個積木");
-        this.setHelpUrl("");
-      }
-    };
-    Block.Javascript['fc-loop']{
-      return ` var ${"TIMES"} = function(){
-          statements_do 
-      }`
-    };
-   // 初始化 Blockly
 
-    Blockly.inject('blocklyDiv', {
-      toolbox: document.getElementById('toolbox')
-    });
+// 呼叫函式積木
+Blockly.Blocks['call_function'] = {
+  init: function() {
+    this.appendDummyInput()
+      .appendField("呼叫函式")
+      .appendField(new Blockly.FieldTextInput("函式名稱"), "FUNC_NAME");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+    this.setTooltip("呼叫一個函式");
+    this.setHelpUrl("");
+  }
+};
+
+Blockly.JavaScript['call_function'] = function(block) {
+  var funcName = block.getFieldValue('FUNC_NAME');
+  var code = `${funcName}();\n`;
+  return code;
+};
+
   </script>
+
 </body>
 </html>
-
-
-
-
-
-
