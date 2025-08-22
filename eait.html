@@ -18,6 +18,7 @@
   <xml id="toolbox" style="display: none">
     <category name="控制" colour="210">
       <block type="repeat_times_simple"></block>
+      <block type='define_function'></block>  
       <block type="fc_loop"></block>  
       <block type="break_loop"></block>
       <block type="continue_loop"></block>
@@ -145,7 +146,7 @@ Blockly.JavaScript['define_function'] = function(block) {
 };
 
 // 呼叫函式積木
-Blockly.Blocks['call_function'] = {
+Blockly.Blocks['fc_loop] = {
   init: function() {
     this.appendDummyInput()
       .appendField("呼叫函式")
@@ -158,7 +159,7 @@ Blockly.Blocks['call_function'] = {
   }
 };
 
-Blockly.JavaScript['call_function'] = function(block) {
+Blockly.JavaScript['fc_loop'] = function(block) {
   var funcName = block.getFieldValue('FUNC_NAME');
   var code = `${funcName}();\n`;
   console.log(code);
@@ -172,6 +173,7 @@ Blockly.JavaScript['call_function'] = function(block) {
 
 </body>
 </html>
+
 
 
 
