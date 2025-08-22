@@ -120,7 +120,25 @@ Blockly.JavaScript["alert_loop"] = function (block) {
   const msg = block.getFieldValue("TEXT");
   return `alert("${msg}");\n`;
 };
-
+    
+     Blockly.Blocks['fc-loop'] = {
+      init: function () {
+        this.appendDummyInput()
+          .appendField(函式名稱)
+          .appendField(new Blockly.FieldNumber(10, 1, 100), "TIMES");
+        this.appendStatementInput("DO")
+          .setCheck(null)
+          .appendField("執行");
+        this.setColour(120);
+        this.setTooltip("用其他積木定義一個積木");
+        this.setHelpUrl("");
+      }
+    };
+    Block.Javascript['fc-loop']{
+      return ` var ${"TIMES"} = function(){
+          statements_do 
+      }`
+    };
    // 初始化 Blockly
 
     Blockly.inject('blocklyDiv', {
@@ -129,6 +147,7 @@ Blockly.JavaScript["alert_loop"] = function (block) {
   </script>
 </body>
 </html>
+
 
 
 
