@@ -165,6 +165,8 @@ Blockly.JavaScript['fc_loop'] = function(block) {
   console.log(code);
   return code;
 };
+    Blockly.javascriptGenerator = Blockly.JavaScript;
+
     var workspace = Blockly.inject('blocklyDiv', {
   toolbox: document.getElementById('toolbox')
 });
@@ -173,6 +175,7 @@ Blockly.JavaScript['fc_loop'] = function(block) {
 
 </body>
 </html>
+
 
 
 
