@@ -15,18 +15,39 @@
 </head>
 <body>
     <p>這是程式積木</p>
-
+    
+    <button id="gitlogin">git登入</button>
+    <p id="message"></p>
     <button class="big-button" onclick="location.href='https://yangycl.github.io/yy.block/eait.html'">
           🧱 開始編程
     </button>
 
     <h1>開發中</h1>
     <p>這是首頁的內容。</p>
+    <script type="module">
+        import { supabase } from './supabaseClient';
+
+        document.getElementById('gitlogin')?.addEventListener('click', async () => {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
+  });
+             if (error) {
+    showMessage('登入失敗：' + error.message);
+  }
+});
+        function showMessage(msg: string) {
+  const el = document.getElementById('message');
+  if (el) el.innerText = msg;
+}
+
+        
+    </script>
 
     
 </body>
 
 </html>
+
 
 
 
