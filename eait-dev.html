@@ -16,7 +16,7 @@
 </head>
 <body>
   
-  <input id="Project">
+  <input id="Project" type="text" placeholder="請輸入專案名稱" />
 
   <div id="blocklyDiv"></div>
 
@@ -184,30 +184,46 @@ const xmlText = Blockly.Xml.domToText(xml);
       Project:el.innerText = " <input id="Project">";
     }
     async function updata() {
+  // 1. 取得專案名稱
+  const projectName = document.getElementById("Project").value;
+
+  // 2. 取得 Blockly XML（假設你已經有 workspace）
+  const xml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
+
+  // 3. 取得登入使用者資訊（需先登入過）
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error || !user) {
-    alert("尚未登入！");
-    return;
-  }
+  alert("尚未登入，請先登入後再儲存！");
+  return;
+}
 
-  // 加上 email 或 id 到 Project_json 裡
-  Project_json.email = user.email;
-  // 或者 Project_json.owner_id = user.id;
+  // 4. 組成要送出的資料
+  const dataToSend = {
+    name: projectName,
+    xml: xml,
+    owner_id: user.id
+  };
 
-  await fetch("https://vfqedrijjknhydradytf.supabase.co/rest/v1/rpc/Project_updata", {
+  // 5. 呼叫 Supabase 的 RPC 或 insert API
+  fetch("https://vfqedrijjknhydradytf.supabase.co/rest/v1/rpc/Project_updata", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcWVkcmlqamtuaHlkcmFkeXRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5ODM5MjIsImV4cCI6MjA3MTU1OTkyMn0.ipt6AD1IwN0XxMqPWggGx_543dnAIbkaYeLzidj5cFA',
-      'Authorization': `Bearer ${supabase.auth.getSession().access_token}` // 建議加上這行驗證
+      'apikey': '你的 anon key',  // 如果你需要
+      'Authorization': `Bearer ${user.access_token}`  // 如果你的 Supabase policy 需要驗證
     },
-    body: JSON.stringify(Project_json)
+    body: JSON.stringify(dataToSend)
+  })
+  .then(res => res.json())
+  .then(result => {
+    console.log("儲存成功", result);
   })
   .catch(err => {
-    console.error('錯誤:', err);
+    console.error("錯誤:", err);
   });
 }
+
 
   </script>
 
