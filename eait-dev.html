@@ -30,6 +30,7 @@
   </xml>
 
   <iframe id="sandboxFrame" sandbox="allow-scripts" style="width:0; height:0; border:0;"></iframe>
+  <button onclick="updata();">儲存儲存</button>
   <button onclick="runCode()">執行</button>
 
   <script>
@@ -173,6 +174,21 @@ Blockly.JavaScript['fc_loop'] = function(block) {
     var workspace = Blockly.inject('blocklyDiv', {
   toolbox: document.getElementById('toolbox')
 });
+    const xml = Blockly.Xml.workspaceToDom(workspace);
+const xmlText = Blockly.Xml.domToText(xml);
+    function updata(){
+      fetch("https://vfqedrijjknhydradytf.supabase.co/rest/v1/rpc/Project_updata",{
+          method: 'POST',
+          headers: {
+          'Content-Type': 'text/plain'
+          },
+                body:xmlText
+      })
+      .catch(err => {
+           console.error('錯誤:', err);
+      });
+      
+    }
 
   </script>
 
