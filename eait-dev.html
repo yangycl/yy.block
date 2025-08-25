@@ -183,19 +183,31 @@ const xmlText = Blockly.Xml.domToText(xml);
       user:supabase.auth.getUser(),
       Project:el.innerText = " <input id="Project">";
     }
-    function updata(){
-      fetch("https://vfqedrijjknhydradytf.supabase.co/rest/v1/rpc/Project_updata",{
-          method: 'POST',
-          headers: {
-          'Content-Type': 'application/json'
-          },
-                body:JSON.stringify(Project_json)
-      })
-      .catch(err => {
-           console.error('錯誤:', err);
-      });
-      
-    }
+    async function updata() {
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    alert("尚未登入！");
+    return;
+  }
+
+  // 加上 email 或 id 到 Project_json 裡
+  Project_json.email = user.email;
+  // 或者 Project_json.owner_id = user.id;
+
+  await fetch("https://vfqedrijjknhydradytf.supabase.co/rest/v1/rpc/Project_updata", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcWVkcmlqamtuaHlkcmFkeXRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5ODM5MjIsImV4cCI6MjA3MTU1OTkyMn0.ipt6AD1IwN0XxMqPWggGx_543dnAIbkaYeLzidj5cFA',
+      'Authorization': `Bearer ${supabase.auth.getSession().access_token}` // 建議加上這行驗證
+    },
+    body: JSON.stringify(Project_json)
+  })
+  .catch(err => {
+    console.error('錯誤:', err);
+  });
+}
 
   </script>
 
