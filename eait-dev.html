@@ -178,11 +178,7 @@ Blockly.JavaScript['fc_loop'] = function(block) {
 });
     const xml = Blockly.Xml.workspaceToDom(workspace);
 const xmlText = Blockly.Xml.domToText(xml);
-    var Project_json = {
-      xml: xmlText ,
-      user:supabase.auth.getUser(),
-      Project:el.innerText = " <input id="Project">";
-    }
+    
     async function updata() {
   // 1. 取得專案名稱
   const projectName = document.getElementById("Project").value;
@@ -200,7 +196,8 @@ const xmlText = Blockly.Xml.domToText(xml);
 
   // 4. 組成要送出的資料
   const dataToSend = {
-    name: projectName,
+    projectName: document.getElementById("Project").value;
+
     xml: xml,
     owner_id: user.id
   };
