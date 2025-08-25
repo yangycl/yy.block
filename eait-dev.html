@@ -179,48 +179,39 @@ Blockly.JavaScript['fc_loop'] = function(block) {
     const xml = Blockly.Xml.workspaceToDom(workspace);
 const xmlText = Blockly.Xml.domToText(xml);
     
-    async function updata() {
-  // 1. 取得專案名稱
+ async function updata() {
+  // 1. 檢查是否登入
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    alert("尚未登入");
+    return;
+  }
+
+  // 2. 取得輸入框的內容（專案名稱）
   const projectName = document.getElementById("Project").value;
 
-  // 2. 取得 Blockly XML（假設你已經有 workspace）
-  const xml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
+  // 3. 取得 Blockly 的 XML 資料
+  const xmlDom = Blockly.Xml.workspaceToDom(workspace);  // 這裡的 workspace 要是你的 Blockly 工作區變數
+  const xmlText = Blockly.Xml.domToText(xmlDom);
 
-  // 3. 取得登入使用者資訊（需先登入過）
-  const { data: { user }, error } = await supabase.auth.getUser();
-
-  if (error || !user) {
-  alert("尚未登入，請先登入後再儲存！");
-  return;
-}
-
-  // 4. 組成要送出的資料
-  const dataToSend = {
-    projectName: document.getElementById("Project").value;
-
-    xml: xml,
-    owner_id: user.id
+  // 4. 組成要送出的 JSON
+  const Project_json = {
+    name: projectName,
+    xml: xmlText,
+    owner_id: user.id  // GitHub/Email 都有 user.id
   };
 
-  // 5. 呼叫 Supabase 的 RPC 或 insert API
-  fetch("https://vfqedrijjknhydradytf.supabase.co/rest/v1/rpc/Project_updata", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': '你的 anon key',  // 如果你需要
-      'Authorization': `Bearer ${user.access_token}`  // 如果你的 Supabase policy 需要驗證
-    },
-    body: JSON.stringify(dataToSend)
-  })
-  .then(res => res.json())
-  .then(result => {
-    console.log("儲存成功", result);
-  })
-  .catch(err => {
-    console.error("錯誤:", err);
-  });
-}
+  // 5. 呼叫 Supabase RPC function
+  const { error } = await supabase.rpc('Project_updata', Project_json);
 
+  // 6. 顯示結果
+  if (error) {
+    console.error("儲存失敗", error);
+    alert("儲存失敗！");
+  } else {
+    alert("儲存成功！");
+  }
+}
 
   </script>
 
