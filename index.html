@@ -1,58 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>首頁</title>
-    <style>
-        
-        h1 {
-            color: #ff0202f5;
-        }
-
-    </style>
-        
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>首頁</title>
+  <style>
+    h1 {
+      color: #ff0202f5;
+    }
+  </style>
 </head>
 <body>
-    <p>這是程式積木</p>
-    
-    <button id="gitlogin">git登入</button>
-    <p id="message"></p>
-    <button class="big-button" onclick="location.href='https://yangycl.github.io/yy.block/eait-dev.html">
-          🧱 開始編程
-    </button>
+  <p>這是程式積木</p>
 
-    <h1>開發中</h1>
-    <p>這是首頁的內容。</p>
-    <script type="module">
-        import { supabase } from './supabaseClient.js';
+  <button id="gitlogin">git登入</button>
 
-        document.getElementById('gitlogin')?.addEventListener('click', async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'github',
-  });
-             if (error) {
-    showMessage('登入失敗：' + error.message);
-  }
-});
-        function showMessage(msg) {
-  const el = document.getElementById('message');
-  if (el) el.innerText = msg;
-}
+  <input id="userid" placeholder="User ID" />
+  <input id="password" placeholder="Password" />
+  <input id="email" placeholder="Email" />
+  <button onclick="sendData()">送出</button>
 
-        
-    </script>
+  <p id="message"></p>
 
-    
+  <button class="big-button" onclick="location.href='https://yangycl.github.io/yy.block/eait-dev.html'">
+    🧱 開始編程
+  </button>
+
+  <h1>開發中</h1>
+  <p>這是首頁的內容。</p>
+
+  <script type="module">
+    import { supabase } from './supabaseClient.js';
+
+    // GitHub 登入
+    document.getElementById('gitlogin')?.addEventListener('click', async () => {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+      });
+      if (error) {
+        showMessage('登入失敗：' + error.message);
+      }
+    });
+
+    // 顯示訊息
+    function showMessage(msg) {
+      const el = document.getElementById('message');
+      if (el) el.innerText = msg;
+    }
+
+    // 將資料送出至 Supabase
+    window.sendData = function () {
+      const data = {
+        userid: document.getElementById("userid").value,
+        password: document.getElementById("password").value,
+        email: document.getElementById("email").value,
+      };
+
+      fetch("https://vfqedrijjknhydradytf.supabase.co/rest/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcWVkcmlqamtuaHlkcmFkeXRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5ODM5MjIsImV4cCI6MjA3MTU1OTkyMn0.ipt6AD1IwN0XxMqPWggGx_543dnAIbkaYeLzidj5cFA",
+          
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(response => {
+        console.log("成功送出資料", response);
+        showMessage("資料已送出！");
+      })
+      .catch(error => {
+        console.error("錯誤發生", error);
+        showMessage("錯誤發生：" + error.message);
+      });
+    }
+  </script>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
