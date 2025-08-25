@@ -15,6 +15,8 @@
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/yangycl/yy.block/main/e737f41f-5407-42fa-8c2e-a9d7a89ad26d.png">
 </head>
 <body>
+  
+  <input id="Project">
 
   <div id="blocklyDiv"></div>
 
@@ -30,7 +32,7 @@
   </xml>
 
   <iframe id="sandboxFrame" sandbox="allow-scripts" style="width:0; height:0; border:0;"></iframe>
-  <button onclick="updata();">儲存儲存</button>
+  <button onclick="updata();">儲存</button>
   <button onclick="runCode()">執行</button>
 
   <script>
@@ -176,13 +178,18 @@ Blockly.JavaScript['fc_loop'] = function(block) {
 });
     const xml = Blockly.Xml.workspaceToDom(workspace);
 const xmlText = Blockly.Xml.domToText(xml);
+    var Project_json = {
+      xml: xmlText ,
+      user:supabase.auth.getUser(),
+      Project:el.innerText = " <input id="Project">";
+    }
     function updata(){
       fetch("https://vfqedrijjknhydradytf.supabase.co/rest/v1/rpc/Project_updata",{
           method: 'POST',
           headers: {
-          'Content-Type': 'text/plain'
+          'Content-Type': 'application/json'
           },
-                body:xmlText
+                body:JSON.stringify(Project_json)
       })
       .catch(err => {
            console.error('錯誤:', err);
