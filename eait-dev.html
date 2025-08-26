@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Blockly Demo</title>
+  
   <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
 <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
 <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
@@ -32,11 +33,14 @@
   </xml>
 
   <iframe id="sandboxFrame" sandbox="allow-scripts" style="width:0; height:0; border:0;"></iframe>
-  <button onclick="updata();">儲存</button>
+  <button id="saveBtn">儲存</button>
   <button onclick="runCode()">執行</button>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
-    
+        // 初始化 Supabase
+    const supabaseUrl = 'https://vfqedrijjknhydradytf.supabase.co'; // 替換為你的 Supabase URL
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcWVkcmlqamtuaHlkcmFkeXRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5ODM5MjIsImV4cCI6MjA3MTU1OTkyMn0.ipt6AD1IwN0XxMqPWggGx_543dnAIbkaYeLzidj5cFA"; //  Supabase 公開匿名金鑰
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
     function runCode() {
       var code = Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
@@ -178,10 +182,13 @@ Blockly.JavaScript['fc_loop'] = function(block) {
 });
     const xml = Blockly.Xml.workspaceToDom(workspace);
 const xmlText = Blockly.Xml.domToText(xml);
+const saveBtn = document.getElementById("saveBtn");
+  saveBtn.addEventListener("click", updata);
     
  async function updata() {
   // 1. 檢查是否登入
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+
   if (authError || !user) {
     alert("尚未登入");
     return;
@@ -202,7 +209,8 @@ const xmlText = Blockly.Xml.domToText(xml);
   };
 
   // 5. 呼叫 Supabase RPC function
-  const { error } = await supabase.rpc('Project_updata', Project_json);
+  const { error } = await supabaseClient.rpc('Project_updata', Project_json);
+
 
   // 6. 顯示結果
   if (error) {
