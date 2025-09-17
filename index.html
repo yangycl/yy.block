@@ -22,34 +22,15 @@
     <block type="alert_loop"></block>
   </category>
   
+    <category name="變數" colour="330" custom="VARIABLE">
+      <block type="var_set"></block>
+    </category>
   </xml>
   <iframe id="sandboxFrame" sandbox="allow-scripts" style="width:0; height:0; border:0;"></iframe>
   <button onclick="runcode()">執行</button>
   <script>
     function runCode() {
-      var code = Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
-      var iframe = document.getElementById('sandboxFrame');
-    
-      var html = `
-        <!DOCTYPE html>
-        <html>
-        <head><meta charset="UTF-8"></head>
-        <body>
-          <script>
-            try {
-              ${code}
-            } catch (e) {
-              alert("執行時發生錯誤: " + e.message);
-            }
-          <\/script>
-        </body>
-        </html>
-      `;
-    
-      // 把 code 放進 iframe 中執行
-      var blob = new Blob([html], { type: 'text/html' });
-      var url = URL.createObjectURL(blob);
-      iframe.src = url;
+      iframe.contentWindow.eval(code)
     }
         Blockly.Blocks['repeat_times_simple'] = {
       init: function () {
@@ -65,14 +46,14 @@
       }
     };
     Blockly.JavaScript['repeat_times_simple'] = function(block) {
-  var times = block.getFieldValue('TIMES');
-  var statements_do = Blockly.JavaScript.statementToCode(block, 'DO');
-  var code = `for (var i = 0; i < ${times}; i++) {\n` +
-             statements_do + 
-             `}\n`;
-  return code;
-};
-Blockly.Blocks['break_loop'] = {
+      var times = block.getFieldValue('TIMES');
+      var statements_do = Blockly.JavaScript.statementToCode(block, 'DO');
+      var code = `for (var i = 0; i < ${times}; i++) {\n` +
+                statements_do + 
+                `}\n`;
+      return code;
+    };
+    Blockly.Blocks['break_loop'] = {
       init: function () {
         this.appendDummyInput().appendField("跳出迴圈");
         this.setPreviousStatement(true, null);
@@ -101,29 +82,51 @@ Blockly.Blocks['break_loop'] = {
     };
     // 定义其他积木类型彈出視窗
     // 定義 alert_loop 積木
-Blockly.Blocks["alert_loop"] = {
-    init: function () {
-       this.appendDummyInput()
-      .appendField("彈出訊息")
-      .appendField(new Blockly.FieldTextInput("你好"), "TEXT");
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(210);
-    this.setTooltip("彈出一段文字訊息");
-  }
-};
+    Blockly.Blocks["alert_loop"] = {
+        init: function () {
+          this.appendDummyInput()
+          .appendField("彈出訊息")
+          .appendField(new Blockly.FieldTextInput("你好"), "TEXT");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(210);
+        this.setTooltip("彈出一段文字訊息");
+      }
+    };
 
-// 定義 JavaScript 產生器
-Blockly.JavaScript["alert_loop"] = function (block) {
-  const msg = block.getFieldValue("TEXT");
-  return `alert("${msg}");\n`;
-};
+    // 定義 JavaScript 產生器
+    Blockly.JavaScript["alert_loop"] = function (block) {
+      const msg = block.getFieldValue("TEXT");
+      return `alert("${msg}");\n`;
+    };
+    Blockly.Blocks["var_set"] = {
+      init: function () {
+        this.appendDummyInput()
+          .appendField("設定變數")
+          .appendField(new Blockly.FieldTextInput("item"), "VAR");
+        this.appendValueInput("VALUE")
+          .setCheck(null)
+          .appendField("為");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(330);
+        this.setTooltip("設定變數的值");
+        this.setHelpUrl("");
+      }
+    };
+    Blockly.JavaScript["var_set"] = function (block) {
+      var varName = block.getFieldValue("VAR");
+      var valueCode = Blockly.JavaScript.valueToCode(block, "VALUE", Blockly.JavaScript.ORDER_ATOMIC);
+      var code = `var ${varName} = ${valueCode};\n`;
+      return code;
+    };
 
-   // 初始化 Blockly
+    // 初始化 Blockly
 
     Blockly.inject('blocklyDiv', {
       toolbox: document.getElementById('toolbox')
     });
+
   </script>
 </body>
 </html>
