@@ -61,7 +61,7 @@
     ">
   </iframe>
 
-  <button onclick="runCode()">執行</button>
+  <button id ="run">執行</button>
   <script>
     function runCode() {
       const code = Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
@@ -188,6 +188,15 @@
     Blockly.inject('blocklyDiv', {
       toolbox: document.getElementById('toolbox')
     });
+    window.addEventListener('DOMContentLoaded', function () {
+      const runBtn = document.getElementById('run');
+      runBtn.addEventListener('click', function () {
+      const code = Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
+      const iframe = document.getElementById('sandboxFrame');
+      iframe.contentWindow.postMessage(code, '*');
+      });
+    });
+
 
   </script>
 </body>
