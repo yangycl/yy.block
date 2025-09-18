@@ -27,7 +27,7 @@
     </category>
   </xml>
   <iframe id="sandboxFrame" sandbox="allow-scripts" style="width:0; height:0; border:0;"></iframe>
-  <button onclick="runcode()">執行</button>
+  <button onclick="runCode()">執行</button>
   <script>
     function runCode() {
       iframe.contentWindow.eval(code)
@@ -121,6 +121,63 @@
       return code;
     };
 
+
+    Blockly.Blocks["if"] = {
+      init: function () {
+        this.appendValueInput("IF")
+          .setCheck("Boolean")
+          .appendField("如果");
+        this.appendStatementInput("DO")
+          .setCheck(null)
+          .appendField("則執行");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(210);
+        this.setTooltip("如果條件為真，則執行一段程式碼");
+        this.setHelpUrl("");
+      }
+
+    };
+    Blockly.JavaScript["if"] = function (block) {
+      var condition = Blockly.JavaScript.valueToCode(block, "IF", Blockly.JavaScript.ORDER_ATOMIC);
+      var statements_do = Blockly.JavaScript.statementToCode(block, "DO");
+      var code = `if (${condition}) {\n` +
+                 statements_do + 
+                 `}\n`;
+      return code;
+    };
+    Blockly.Blocks[">"] = {
+      init: function () {
+        this.appendValueInput("A")
+          .setCheck(null)
+          .appendField("");
+        this.appendValueInput("B")
+          .setCheck(null)
+          .appendField("大於");
+        this.setInputsInline(true);
+        this.setOutput(true, "Boolean");
+        this.setColour(210);
+        this.setTooltip("如果前者大於後者，則回傳 true，否則回傳 false");
+        this.setHelpUrl("");
+      }
+    }
+    Blockly.JavaScript[">"] = function (block) {
+      var value_a = Blockly.JavaScript.valueToCode(block, "A", Blockly.JavaScript.ORDER_ATOMIC);
+      var value_b = Blockly.JavaScript.valueToCode(block, "B", Blockly.JavaScript.ORDER_ATOMIC);
+      if (!value_a>value_b) return 'false';
+      else return 'true';
+    };
+    Blockly.Blocklys['+'] = {
+      init: function() {
+        this.appendDummyInput()
+            .appendField(new Blockly.FieldNumber(0), "NUM1");
+        this.setOutput(true, 'Number');
+        
+        this.setColour(230);
+        this.setTooltip('輸入一個數字');
+        this.setHelpUrl('');
+      }
+    };
     // 初始化 Blockly
 
     Blockly.inject('blocklyDiv', {
