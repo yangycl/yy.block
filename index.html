@@ -37,12 +37,33 @@
     </category>
 
   </xml>
-  <iframe id="sandboxFrame" sandbox="allow-scripts" style="width:0; height:0; border:0;"></iframe>
+  <iframe id="sandboxFrame" sandbox="allow-scripts"
+    srcdoc="
+      <!DOCTYPE html>
+      <html>
+      <body>
+        <script>
+          window.addEventListener('message', function(e) {
+            try {
+              eval(e.data);
+            } catch (err) {
+              alert('錯誤：' + err.message);
+            }
+          });
+        <\/script>
+      </body>
+      </html>
+    ">
+  </iframe>
+
   <button onclick="runCode()">執行</button>
   <script>
     function runCode() {
-      iframe.contentWindow.eval(code)
+      const code = Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
+      const iframe = document.getElementById('sandboxFrame');
+      iframe.contentWindow.postMessage(code, '*');
     }
+    // 定义 repeat_times_simple 积木
         Blockly.Blocks['repeat_times_simple'] = {
       init: function () {
         this.appendDummyInput()
