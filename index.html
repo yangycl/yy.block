@@ -25,9 +25,17 @@
   
     <category name="變數" colour="330" custom="VARIABLE">
       <block type="var_set"></block>
-      <block type=">"></block>
-
+      
     </category>
+    <category name="邏輯" colour="210">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null"></block>
+      <block type="logic_ternary"></block>
+    </category>
+
   </xml>
   <iframe id="sandboxFrame" sandbox="allow-scripts" style="width:0; height:0; border:0;"></iframe>
   <button onclick="runCode()">執行</button>
@@ -148,27 +156,6 @@
                  statements_do + 
                  `}\n`;
       return code;
-    };
-    Blockly.Blocks[">"] = {
-      init: function () {
-        this.appendValueInput("A")
-          .setCheck(null)
-          .appendField("");
-        this.appendValueInput("B")
-          .setCheck(null)
-          .appendField("大於");
-        this.setInputsInline(true);
-        this.setOutput(true, "Boolean");
-        this.setColour(210);
-        this.setTooltip("如果前者大於後者，則回傳 true，否則回傳 false");
-        this.setHelpUrl("");
-      }
-    }
-    Blockly.JavaScript[">"] = function (block) {
-      var value_a = Blockly.JavaScript.valueToCode(block, "A", Blockly.JavaScript.ORDER_ATOMIC);
-      var value_b = Blockly.JavaScript.valueToCode(block, "B", Blockly.JavaScript.ORDER_ATOMIC);
-      if (!value_a>value_b) return 'false';
-      else return 'true';
     };
    // 初始化 Blockly
 
